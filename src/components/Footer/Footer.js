@@ -1,137 +1,169 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { Link as RouterLink } from 'react-router-dom';
 import {
   Box,
   Container,
   Grid,
   Typography,
   Link,
-  TextField,
-  Button,
-  IconButton
+  IconButton,
+  Divider,
 } from '@mui/material';
 import {
   Facebook,
   Instagram,
   Twitter,
-  WhatsApp
+  WhatsApp,
+  Phone,
+  Email,
+  LocationOn,
 } from '@mui/icons-material';
-import { styled } from '@mui/material/styles';
-
-const FooterRoot = styled(Box)(({ theme }) => ({
-  backgroundColor: theme.palette.primary.main,
-  color: 'white',
-  padding: theme.spacing(6, 0),
-  marginTop: 'auto',
-}));
-
-const FooterLink = styled(Link)({
-  color: 'white',
-  textDecoration: 'none',
-  '&:hover': {
-    textDecoration: 'underline',
-  },
-});
-
-const SocialIcons = styled(Box)({
-  display: 'flex',
-  gap: '1rem',
-  marginTop: '1rem',
-});
 
 const Footer = () => {
-  const [email, setEmail] = useState('');
-
-  const handleNewsletterSubmit = (e) => {
-    e.preventDefault();
-    // Implementar lógica de inscrição na newsletter
-    console.log('Email inscrito:', email);
-    setEmail('');
-  };
-
   return (
-    <FooterRoot>
-      <Container>
+    <Box
+      component="footer"
+      sx={{
+        bgcolor: 'primary.main',
+        color: 'white',
+        py: 6,
+        mt: 'auto',
+      }}
+    >
+      <Container maxWidth="lg">
         <Grid container spacing={4}>
-          <Grid item xs={12} sm={4}>
+          {/* Informações de Contato */}
+          <Grid item xs={12} sm={6} md={3}>
             <Typography variant="h6" gutterBottom>
-              Sobre Nós
+              Contato
             </Typography>
-            <Typography variant="body2">
-              Servindo os melhores lanches da cidade desde 2024.
-              Qualidade e sabor incomparáveis para você.
-            </Typography>
-          </Grid>
-
-          <Grid item xs={12} sm={4}>
-            <Typography variant="h6" gutterBottom>
-              Links Rápidos
-            </Typography>
-            <Box display="flex" flexDirection="column" gap={1}>
-              <FooterLink href="/politica-privacidade">
-                Política de Privacidade
-              </FooterLink>
-              <FooterLink href="/termos-servico">
-                Termos de Serviço
-              </FooterLink>
-              <FooterLink href="/trabalhe-conosco">
-                Trabalhe Conosco
-              </FooterLink>
+            <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+              <Phone sx={{ mr: 1 }} />
+              <Typography>(11) 1234-5678</Typography>
+            </Box>
+            <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+              <WhatsApp sx={{ mr: 1 }} />
+              <Typography>(11) 98765-4321</Typography>
+            </Box>
+            <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+              <Email sx={{ mr: 1 }} />
+              <Typography>contato@lanchonete.com</Typography>
+            </Box>
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+              <LocationOn sx={{ mr: 1 }} />
+              <Typography>Rua da Lanchonete, 123</Typography>
             </Box>
           </Grid>
 
-          <Grid item xs={12} sm={4}>
+          {/* Links Rápidos */}
+          <Grid item xs={12} sm={6} md={3}>
             <Typography variant="h6" gutterBottom>
-              Newsletter
+              Links Rápidos
             </Typography>
-            <form onSubmit={handleNewsletterSubmit}>
-              <TextField
-                fullWidth
-                variant="outlined"
-                placeholder="Seu email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                sx={{
-                  backgroundColor: 'white',
-                  borderRadius: 1,
-                  marginBottom: 2
-                }}
-              />
-              <Button
-                type="submit"
-                variant="contained"
-                color="secondary"
-                fullWidth
-              >
-                Inscrever-se
-              </Button>
-            </form>
+            <Link
+              component={RouterLink}
+              to="/cardapio"
+              color="inherit"
+              display="block"
+              sx={{ mb: 1 }}
+            >
+              Cardápio
+            </Link>
+            <Link
+              component={RouterLink}
+              to="/promocoes"
+              color="inherit"
+              display="block"
+              sx={{ mb: 1 }}
+            >
+              Promoções
+            </Link>
+            <Link
+              component={RouterLink}
+              to="/sobre"
+              color="inherit"
+              display="block"
+              sx={{ mb: 1 }}
+            >
+              Sobre Nós
+            </Link>
+            <Link
+              component={RouterLink}
+              to="/contato"
+              color="inherit"
+              display="block"
+            >
+              Contato
+            </Link>
+          </Grid>
 
-            <SocialIcons>
-              <IconButton color="inherit">
+          {/* Informações Legais */}
+          <Grid item xs={12} sm={6} md={3}>
+            <Typography variant="h6" gutterBottom>
+              Informações Legais
+            </Typography>
+            <Link
+              component={RouterLink}
+              to="/politica-privacidade"
+              color="inherit"
+              display="block"
+              sx={{ mb: 1 }}
+            >
+              Política de Privacidade
+            </Link>
+            <Link
+              component={RouterLink}
+              to="/termos-servico"
+              color="inherit"
+              display="block"
+              sx={{ mb: 1 }}
+            >
+              Termos de Serviço
+            </Link>
+            <Link
+              component={RouterLink}
+              to="/trabalhe-conosco"
+              color="inherit"
+              display="block"
+            >
+              Trabalhe Conosco
+            </Link>
+          </Grid>
+
+          {/* Redes Sociais */}
+          <Grid item xs={12} sm={6} md={3}>
+            <Typography variant="h6" gutterBottom>
+              Redes Sociais
+            </Typography>
+            <Box>
+              <IconButton color="inherit" aria-label="Facebook">
                 <Facebook />
               </IconButton>
-              <IconButton color="inherit">
+              <IconButton color="inherit" aria-label="Instagram">
                 <Instagram />
               </IconButton>
-              <IconButton color="inherit">
+              <IconButton color="inherit" aria-label="Twitter">
                 <Twitter />
               </IconButton>
-              <IconButton color="inherit">
+              <IconButton color="inherit" aria-label="WhatsApp">
                 <WhatsApp />
               </IconButton>
-            </SocialIcons>
+            </Box>
+            <Typography variant="body2" sx={{ mt: 2 }}>
+              Horário de Funcionamento:
+              <br />
+              Segunda a Domingo: 11h às 23h
+            </Typography>
           </Grid>
         </Grid>
 
-        <Typography
-          variant="body2"
-          align="center"
-          sx={{ marginTop: 4, borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: 2 }}
-        >
+        <Divider sx={{ my: 3, borderColor: 'rgba(255, 255, 255, 0.2)' }} />
+
+        <Typography variant="body2" align="center">
           © {new Date().getFullYear()} Lanchonete React. Todos os direitos reservados.
         </Typography>
       </Container>
-    </FooterRoot>
+    </Box>
   );
 };
 

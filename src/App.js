@@ -19,6 +19,11 @@ import Carrinho from './pages/Carrinho/Carrinho';
 import Contato from './pages/Contato/Contato';
 import Sobre from './pages/Sobre/Sobre';
 import Promocoes from './pages/Promocoes/Promocoes';
+import PoliticaPrivacidade from './pages/PoliticaPrivacidade/PoliticaPrivacidade';
+import TermosServico from './pages/TermosServico/TermosServico';
+import TrabalheConosco from './pages/TrabalheConosco/TrabalheConosco';
+import HistoricoPedidos from './pages/HistoricoPedidos/HistoricoPedidos';
+import Cupons from './pages/Cupons/Cupons';
 
 // Páginas administrativas
 import Dashboard from './pages/Admin/Dashboard';
@@ -26,6 +31,7 @@ import GerenciarProdutos from './pages/Admin/GerenciarProdutos';
 import GerenciarPedidos from './pages/Admin/GerenciarPedidos';
 import GerenciarUsuarios from './pages/Admin/GerenciarUsuarios';
 import Configuracoes from './pages/Admin/Configuracoes';
+import GerenciarCupons from './pages/Admin/GerenciarCupons';
 
 // Criando um tema personalizado
 const theme = createTheme({
@@ -58,6 +64,7 @@ function App() {
             <Route path="produtos" element={<GerenciarProdutos />} />
             <Route path="pedidos" element={<GerenciarPedidos />} />
             <Route path="usuarios" element={<GerenciarUsuarios />} />
+            <Route path="cupons" element={<GerenciarCupons />} />
             <Route path="configuracoes" element={<Configuracoes />} />
           </Route>
 
@@ -83,6 +90,11 @@ function App() {
                     <Route path="/contato" element={<Contato />} />
                     <Route path="/sobre" element={<Sobre />} />
                     <Route path="/promocoes" element={<Promocoes />} />
+                    <Route path="/politica-privacidade" element={<PoliticaPrivacidade />} />
+                    <Route path="/termos-servico" element={<TermosServico />} />
+                    <Route path="/trabalhe-conosco" element={<TrabalheConosco />} />
+                    <Route path="/historico-pedidos" element={<HistoricoPedidos />} />
+                    <Route path="/cupons" element={<Cupons />} />
                   </Routes>
                 </Box>
                 <Footer />

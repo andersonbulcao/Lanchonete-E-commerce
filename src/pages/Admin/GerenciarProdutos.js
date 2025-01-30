@@ -22,6 +22,9 @@ import {
   InputLabel,
   Box,
   Avatar,
+  Grid,
+  InputAdornment,
+  Rating,
 } from '@mui/material';
 import { Edit, Delete, Add } from '@mui/icons-material';
 
@@ -30,24 +33,28 @@ const produtosIniciais = [
   {
     id: 1,
     nome: 'X-Burger Especial',
-    categoria: 'lanches',
+    categoria: 'Hambúrgueres',
     preco: 25.90,
-    descricao: 'Hambúrguer artesanal, queijo cheddar, bacon, alface e tomate',
+    descricao: 'Hambúrguer artesanal com queijo, bacon, alface e tomate',
     estoque: 50,
-    imagem: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=500&auto=format',
-    ingredientes: ['Pão brioche', 'Hambúrguer 180g', 'Queijo cheddar', 'Bacon', 'Alface', 'Tomate'],
-    tempoPreparoMin: 20
+    imagem: 'https://source.unsplash.com/featured/?burger',
+    ingredientes: ['Pão', 'Hambúrguer 180g', 'Queijo', 'Bacon', 'Alface', 'Tomate'],
+    tempoPreparo: '20-25 min',
+    avaliacaoMedia: 4.5,
+    numeroAvaliacoes: 128,
   },
   {
     id: 2,
-    nome: 'Refrigerante Cola',
-    categoria: 'bebidas',
-    preco: 6.00,
-    descricao: 'Refrigerante 350ml',
+    nome: 'Batata Frita Grande',
+    categoria: 'Acompanhamentos',
+    preco: 13.90,
+    descricao: 'Batata frita crocante com sal e temperos',
     estoque: 100,
-    imagem: 'https://images.unsplash.com/photo-1629203851122-3726ecdf080e?w=500&auto=format',
-    ingredientes: [],
-    tempoPreparoMin: 1
+    imagem: 'https://source.unsplash.com/featured/?fries',
+    ingredientes: ['Batata', 'Sal', 'Temperos'],
+    tempoPreparo: '15-20 min',
+    avaliacaoMedia: 4.8,
+    numeroAvaliacoes: 95,
   },
   {
     id: 3,
@@ -58,7 +65,9 @@ const produtosIniciais = [
     estoque: 30,
     imagem: 'https://images.unsplash.com/photo-1579954115545-a95591f28bfc?w=500&auto=format',
     ingredientes: ['Sorvete', 'Leite', 'Calda'],
-    tempoPreparoMin: 10
+    tempoPreparo: '10 min',
+    avaliacaoMedia: 4.2,
+    numeroAvaliacoes: 78,
   },
 ];
 
@@ -66,7 +75,7 @@ const categorias = ['lanches', 'bebidas', 'sobremesas', 'porções'];
 
 const GerenciarProdutos = () => {
   const [produtos, setProdutos] = useState(produtosIniciais);
-  const [openDialog, setOpenDialog] = useState(false);
+  const [open, setOpen] = useState(false);
   const [editando, setEditando] = useState(null);
   const [formData, setFormData] = useState({
     nome: '',
@@ -75,11 +84,11 @@ const GerenciarProdutos = () => {
     descricao: '',
     estoque: '',
     imagem: '',
-    ingredientes: [],
-    tempoPreparoMin: ''
+    ingredientes: '',
+    tempoPreparo: '',
   });
 
-  const handleOpenDialog = (produto = null) => {
+  const handleOpen = (produto = null) => {
     if (produto) {
       setEditando(produto.id);
       setFormData(produto);
@@ -92,15 +101,15 @@ const GerenciarProdutos = () => {
         descricao: '',
         estoque: '',
         imagem: '',
-        ingredientes: [],
-        tempoPreparoMin: ''
+        ingredientes: '',
+        tempoPreparo: '',
       });
     }
-    setOpenDialog(true);
+    setOpen(true);
   };
 
-  const handleCloseDialog = () => {
-    setOpenDialog(false);
+  const handleClose = () => {
+    setOpen(false);
     setEditando(null);
   };
 
@@ -112,23 +121,28 @@ const GerenciarProdutos = () => {
     }));
   };
 
-  const handleSubmit = () => {
-    const produtoFormatado = {
-      ...formData,
-      preco: Number(formData.preco),
-      estoque: Number(formData.estoque),
-      tempoPreparoMin: Number(formData.tempoPreparoMin),
-      ingredientes: formData.ingredientes.length ? formData.ingredientes : [],
-    };
-    
+  const handleSubmit = (event) => {
+    event.preventDefault();
     if (editando) {
-      setProdutos(produtos.map(p => 
-        p.id === editando ? { ...produtoFormatado, id: editando } : p
+      setProdutos(produtos.map(produto =>
+        produto.id === editando.id ? {
+          ...produto,
+          ...formData,
+          ingredientes: formData.ingredientes.split(',').map(i => i.trim()),
+          avaliacaoMedia: produto.avaliacaoMedia,
+          numeroAvaliacoes: produto.numeroAvaliacoes,
+        } : produto
       ));
     } else {
-      setProdutos([...produtos, { ...produtoFormatado, id: Date.now() }]);
+      setProdutos([...produtos, {
+        ...formData,
+        id: produtos.length + 1,
+        ingredientes: formData.ingredientes.split(',').map(i => i.trim()),
+        avaliacaoMedia: 0,
+        numeroAvaliacoes: 0,
+      }]);
     }
-    handleCloseDialog();
+    handleClose();
   };
 
   const handleDelete = (id) => {
@@ -147,7 +161,7 @@ const GerenciarProdutos = () => {
           variant="contained"
           color="primary"
           startIcon={<Add />}
-          onClick={() => handleOpenDialog()}
+          onClick={() => handleOpen(null)}
         >
           Novo Produto
         </Button>
@@ -163,6 +177,7 @@ const GerenciarProdutos = () => {
               <TableCell>Preço</TableCell>
               <TableCell>Estoque</TableCell>
               <TableCell>Tempo Preparo</TableCell>
+              <TableCell>Avaliação</TableCell>
               <TableCell>Ações</TableCell>
             </TableRow>
           </TableHead>
@@ -174,18 +189,26 @@ const GerenciarProdutos = () => {
                     src={produto.imagem}
                     alt={produto.nome}
                     variant="rounded"
-                    sx={{ width: 56, height: 56 }}
+                    sx={{ width: 60, height: 60 }}
                   />
                 </TableCell>
                 <TableCell>{produto.nome}</TableCell>
                 <TableCell>{produto.categoria}</TableCell>
                 <TableCell>R$ {Number(produto.preco).toFixed(2)}</TableCell>
                 <TableCell>{produto.estoque}</TableCell>
-                <TableCell>{produto.tempoPreparoMin} min</TableCell>
+                <TableCell>{produto.tempoPreparo}</TableCell>
+                <TableCell>
+                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                    <Rating value={produto.avaliacaoMedia} readOnly precision={0.5} />
+                    <Typography variant="body2" color="text.secondary" sx={{ ml: 1 }}>
+                      ({produto.numeroAvaliacoes})
+                    </Typography>
+                  </Box>
+                </TableCell>
                 <TableCell>
                   <IconButton
                     color="primary"
-                    onClick={() => handleOpenDialog(produto)}
+                    onClick={() => handleOpen(produto)}
                   >
                     <Edit />
                   </IconButton>
@@ -202,100 +225,100 @@ const GerenciarProdutos = () => {
         </Table>
       </TableContainer>
 
-      <Dialog open={openDialog} onClose={handleCloseDialog} maxWidth="sm" fullWidth>
+      <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth>
         <DialogTitle>
           {editando ? 'Editar Produto' : 'Novo Produto'}
         </DialogTitle>
-        <DialogContent>
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: 2 }}>
-            <TextField
-              label="Nome do Produto"
-              name="nome"
-              value={formData.nome}
-              onChange={handleChange}
-              fullWidth
-              required
-            />
-            <FormControl fullWidth required>
-              <InputLabel>Categoria</InputLabel>
-              <Select
-                name="categoria"
-                value={formData.categoria}
-                onChange={handleChange}
-                label="Categoria"
-              >
-                {categorias.map((cat) => (
-                  <MenuItem key={cat} value={cat}>
-                    {cat.charAt(0).toUpperCase() + cat.slice(1)}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-            <TextField
-              label="Preço"
-              name="preco"
-              type="number"
-              value={formData.preco}
-              onChange={handleChange}
-              fullWidth
-              required
-              inputProps={{ step: '0.01' }}
-            />
-            <TextField
-              label="URL da Imagem"
-              name="imagem"
-              value={formData.imagem}
-              onChange={handleChange}
-              fullWidth
-              required
-            />
-            <TextField
-              label="Descrição"
-              name="descricao"
-              value={formData.descricao}
-              onChange={handleChange}
-              fullWidth
-              multiline
-              rows={3}
-            />
-            <TextField
-              label="Ingredientes (separados por vírgula)"
-              name="ingredientes"
-              value={Array.isArray(formData.ingredientes) ? formData.ingredientes.join(', ') : ''}
-              onChange={(e) => handleChange({
-                target: {
-                  name: 'ingredientes',
-                  value: e.target.value.split(',').map(item => item.trim())
-                }
-              })}
-              fullWidth
-            />
-            <TextField
-              label="Tempo de Preparo (minutos)"
-              name="tempoPreparoMin"
-              type="number"
-              value={formData.tempoPreparoMin}
-              onChange={handleChange}
-              fullWidth
-              required
-            />
-            <TextField
-              label="Estoque"
-              name="estoque"
-              type="number"
-              value={formData.estoque}
-              onChange={handleChange}
-              fullWidth
-              required
-            />
-          </Box>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseDialog}>Cancelar</Button>
-          <Button onClick={handleSubmit} variant="contained" color="primary">
-            {editando ? 'Salvar' : 'Criar'}
-          </Button>
-        </DialogActions>
+        <form onSubmit={handleSubmit}>
+          <DialogContent>
+            <Grid container spacing={2}>
+              <Grid item xs={12}>
+                <TextField
+                  fullWidth
+                  label="URL da Imagem"
+                  name="imagem"
+                  value={formData.imagem}
+                  onChange={handleChange}
+                  required
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  fullWidth
+                  label="Nome"
+                  name="nome"
+                  value={formData.nome}
+                  onChange={handleChange}
+                  required
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  fullWidth
+                  label="Preço"
+                  name="preco"
+                  type="number"
+                  value={formData.preco}
+                  onChange={handleChange}
+                  required
+                  InputProps={{
+                    startAdornment: <InputAdornment position="start">R$</InputAdornment>,
+                  }}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  fullWidth
+                  label="Categoria"
+                  name="categoria"
+                  value={formData.categoria}
+                  onChange={handleChange}
+                  required
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  fullWidth
+                  label="Tempo de Preparo"
+                  name="tempoPreparo"
+                  value={formData.tempoPreparo}
+                  onChange={handleChange}
+                  required
+                  placeholder="Ex: 20-25 min"
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  fullWidth
+                  label="Descrição"
+                  name="descricao"
+                  value={formData.descricao}
+                  onChange={handleChange}
+                  multiline
+                  rows={2}
+                  required
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  fullWidth
+                  label="Ingredientes"
+                  name="ingredientes"
+                  value={formData.ingredientes}
+                  onChange={handleChange}
+                  required
+                  helperText="Separe os ingredientes por vírgula"
+                />
+              </Grid>
+            </Grid>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleClose}>Cancelar</Button>
+            <Button type="submit" variant="contained">
+              {editando ? 'Salvar' : 'Criar'}
+            </Button>
+          </DialogActions>
+        </form>
       </Dialog>
     </Container>
   );
